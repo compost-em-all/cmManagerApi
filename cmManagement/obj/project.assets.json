@@ -487,11 +487,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/josh/code/cmManagerApi/WebApplication1/WebApplication1.csproj",
-      "projectName": "WebApplication1",
-      "projectPath": "/home/josh/code/cmManagerApi/WebApplication1/WebApplication1.csproj",
+      "projectUniqueName": "/home/josh/code/cmManagerApi/cmManagement/cmManagement.csproj",
+      "projectName": "cmManagement",
+      "projectPath": "/home/josh/code/cmManagerApi/cmManagement/cmManagement.csproj",
       "packagesPath": "/home/josh/.nuget/packages/",
-      "outputPath": "/home/josh/code/cmManagerApi/WebApplication1/obj/",
+      "outputPath": "/home/josh/code/cmManagerApi/cmManagement/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/josh/.nuget/NuGet/NuGet.Config"

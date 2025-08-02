@@ -6,7 +6,7 @@
 - Install postgres, pgadmin
 - Create database
 - Create schema
-    - schema will assume only one Firm is using the application
+    - (schema will assume only one Firm is using the application? )
 - Create tables
     - Users
          - UserId
@@ -17,13 +17,14 @@
             - must be hashed
          - Firm name
     - Customers -> clients
-        - A customer/client is 1:N with matters
+        - (A customer/client is 1:N with matters)
         - Name
         - Phone number
         - CustomerId
+            - guid
     - Matters
+        - (CustomerId -> Customers/CustomerId Fk)
         - MatterId
-        - CustomerId -> Customers/CustomerId
         - Title
         - Description
 
@@ -32,7 +33,9 @@
 - API
     - EFPowerTools
         - Reverse engineer db to setup context and initial migration
+    - (Unit of Work/Repo pattern)
     - APIs
+        - (Basic error handling)
         - Customer / Client
             - GET /api/customers → Retrieve a list of customers
             - POST /api/customers → Create a new customer (name, phone)
@@ -51,6 +54,7 @@
 ## 3. React/Tailwind Frontend
 - Install node/npm
 - Create react app
+    - (Basic error handling)
     - Use React with TailwindCSS
     - Build a minimal UI with:
         - A login form
