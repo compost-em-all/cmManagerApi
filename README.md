@@ -2,12 +2,12 @@
 
 ### Things to Do / Gameplan
 
-## 1. Database
-- Install postgres, pgadmin
-- Create database
-- Create schema
+## 1. Database✅
+- ✅ Install postgres, pgadmin
+- ✅ Create database
+- ✅: Create schema
     - (schema will assume only one Firm is using the application? )
-- Create tables
+- ✅: Create tables
     - Users
          - UserId
          - Email addr
@@ -29,10 +29,10 @@
         - Description
 
 ## 2. Backend API
-- Install dotnet 8
+- ✅: Install dotnet 8
 - API
-    - EFPowerTools
-        - Reverse engineer db to setup context and initial migration
+    - ✅: EFPowerTools
+        - ✅: Reverse engineer db to setup context and initial migration
     - (Unit of Work/Repo pattern)
     - APIs
         - (Basic error handling)
