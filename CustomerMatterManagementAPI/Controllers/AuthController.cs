@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace cmManagement.api
+namespace CustomerMatterManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -28,10 +28,10 @@
     "output-path": "Models"
   },
   "names": {
-    "dbcontext-name": "cmmanagementContext",
+    "dbcontext-name": "CustomerMatterManagementAPIContext",
     "dbcontext-namespace": null,
     "model-namespace": null,
-    "root-namespace": "cmManagement"
+    "root-namespace": "CustomerMatterManagementAPI"
   },
   "tables": [
     {

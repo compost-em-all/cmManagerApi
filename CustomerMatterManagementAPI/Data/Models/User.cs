@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace cmManagement;
+namespace CustomerMatterManagementAPI;
 
 public partial class User
 {

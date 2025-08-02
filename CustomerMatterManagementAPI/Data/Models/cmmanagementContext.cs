@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace cmManagement;
+namespace CustomerMatterManagementAPI;
 
-public partial class cmmanagementContext : DbContext
+public partial class CustomerMatterManagementAPIContext : DbContext
 {
-    public cmmanagementContext(DbContextOptions<cmmanagementContext> options)
+    public CustomerMatterManagementAPIContext(DbContextOptions<CustomerMatterManagementAPIContext> options)
         : base(options)
     {
     }

@@ -17,7 +17,7 @@ Add these NuGet packages to your .csproj based on your selections:
 1. Register your DbContext class in your "Program.cs" file.
 
     ```csharp
-    builder.Services.AddDbContext<cmmanagementContext>(
+    builder.Services.AddDbContext<CustomerMatterManagementAPIContext>(
         options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
     ```
 
