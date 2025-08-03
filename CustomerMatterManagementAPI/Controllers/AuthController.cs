@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using CustomerMatterManagementAPI.Data.DTOs;
 
 namespace CustomerMatterManagementAPI.Controllers
 {
@@ -108,8 +108,17 @@ namespace CustomerMatterManagementAPI.Controllers
         [Authorize]
         public IActionResult GetCurrentUser()
         {
-            // Implement logic to get the current user
-            return Ok("Current user details");
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            var user = _dbContext.Users.FirstOrDefault(u => u.EmailAddr == userEmail);
+
+            if (user == null)
+            {
+                return NotFound("You don't exist. Heavy.");
+            }
+
+            UserDetailDTO userDetail = (UserDetailDTO)user;
+            return Ok(userDetail);
         }
     }
 }
