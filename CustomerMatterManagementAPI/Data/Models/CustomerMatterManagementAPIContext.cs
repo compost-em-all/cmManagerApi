@@ -53,6 +53,8 @@ public partial class CustomerMatterManagementAPIContext : DbContext
 
             entity.ToTable("users", "cmschema");
 
+            entity.HasIndex(e => e.EmailAddr, "users_EmailAddr_key").IsUnique();
+
             entity.Property(e => e.UserId).UseIdentityAlwaysColumn();
             entity.Property(e => e.EmailAddr).HasMaxLength(255);
             entity.Property(e => e.FirmName).HasMaxLength(255);
