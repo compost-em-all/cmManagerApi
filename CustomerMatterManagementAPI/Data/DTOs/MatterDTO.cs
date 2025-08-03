@@ -1,3 +1,5 @@
+namespace CustomerMatterManagementAPI.Data.DTOs;
+
 using CustomerMatterManagementAPI;
 
 public class MatterDTO 
