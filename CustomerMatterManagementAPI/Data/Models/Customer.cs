@@ -13,9 +13,5 @@ public partial class Customer
 
     public string PhoneNum { get; set; } = null!;
 
-    public virtual Customer CustomerNavigation { get; set; } = null!;
-
-    public virtual Customer? InverseCustomerNavigation { get; set; }
-
     public virtual ICollection<Matter> Matters { get; set; } = new List<Matter>();
 }
