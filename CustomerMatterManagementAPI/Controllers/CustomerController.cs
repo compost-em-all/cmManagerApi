@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CustomerMatterManagementAPI.Data.Repositories;
 using CustomerMatterManagementAPI.Data.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerMatterManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -32,7 +34,7 @@ namespace CustomerMatterManagementAPI.Controllers
             {
                 return BadRequest("Invalid customer data.");
             }
-            
+
             // Map DTO to entity so we can get the CustomerId after creation
             var customer = new Customer
             {
@@ -84,7 +86,7 @@ namespace CustomerMatterManagementAPI.Controllers
         {
             var customer = await _unitOfWork.Customers.GetByIdAsync(customer_id);
             if (customer == null) return NotFound();
-            
+
             _unitOfWork.Customers.Delete(customer);
             await _unitOfWork.SaveChangesAsync();
             return Ok();
@@ -124,7 +126,7 @@ namespace CustomerMatterManagementAPI.Controllers
             await _unitOfWork.SaveChangesAsync();
 
             var savedMatter = await _unitOfWork.Matters.GetByIdAsync(customer_id, matter.MatterId);
-            
+
             return CreatedAtAction(nameof(GetMatterDetails), new { customer_id = savedMatter?.CustomerId, matter_id = savedMatter?.MatterId }, savedMatter);
         }
 
@@ -134,7 +136,7 @@ namespace CustomerMatterManagementAPI.Controllers
         {
             var customer = await _unitOfWork.Customers.GetByIdAsync(customer_id);
             if (customer == null) return NotFound("Customer not found.");
-            
+
             var matter = await _unitOfWork.Matters.GetByIdAsync(customer_id, matter_id);
             if (matter == null) return NotFound();
             return Ok(matter);
