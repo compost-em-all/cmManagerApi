@@ -28,6 +28,11 @@ namespace CustomerMatterManagementAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCustomer([FromBody] CustomerDTO customerDto)
         {
+            if (customerDto == null)
+            {
+                return BadRequest("Invalid customer data.");
+            }
+            
             // Map DTO to entity so we can get the CustomerId after creation
             var customer = new Customer
             {
@@ -57,11 +62,16 @@ namespace CustomerMatterManagementAPI.Controllers
         [HttpPut("{customer_id}")]
         public async Task<IActionResult> UpdateCustomer(int customer_id, [FromBody] CustomerDTO customerDto)
         {
+            if (customerDto == null)
+            {
+                return BadRequest("Invalid customer data.");
+            }
+
             var customer = await _unitOfWork.Customers.GetByIdAsync(customer_id);
             if (customer == null) return NotFound();
 
-            customer.Name = customerDto.Name;
-            customer.PhoneNum = customerDto.PhoneNum;
+            customer.Name = customerDto.Name ?? customer.Name;
+            customer.PhoneNum = customerDto.PhoneNum ?? customer.PhoneNum;
 
             _unitOfWork.Customers.Update(customer);
             await _unitOfWork.SaveChangesAsync();
@@ -84,6 +94,9 @@ namespace CustomerMatterManagementAPI.Controllers
         [HttpGet("{customer_id}/matters")]
         public async Task<IActionResult> GetMattersForCustomer(int customer_id)
         {
+            var customer = await _unitOfWork.Customers.GetByIdAsync(customer_id);
+            if (customer == null) return NotFound("Customer not found.");
+
             var matters = await _unitOfWork.Matters.GetByCustomerIdAsync(customer_id);
             return Ok(matters);
         }
@@ -92,6 +105,14 @@ namespace CustomerMatterManagementAPI.Controllers
         [HttpPost("{customer_id}/matters")]
         public async Task<IActionResult> CreateMatterForCustomer(int customer_id, [FromBody] MatterDTO matterDto)
         {
+            if (matterDto == null)
+            {
+                return BadRequest("Invalid matter data.");
+            }
+
+            var customer = await _unitOfWork.Customers.GetByIdAsync(customer_id);
+            if (customer == null) return NotFound("Customer not found.");
+
             var matter = new Matter
             {
                 CustomerId = customer_id,
@@ -111,6 +132,9 @@ namespace CustomerMatterManagementAPI.Controllers
         [HttpGet("{customer_id}/matters/{matter_id}")]
         public async Task<IActionResult> GetMatterDetails(int customer_id, int matter_id)
         {
+            var customer = await _unitOfWork.Customers.GetByIdAsync(customer_id);
+            if (customer == null) return NotFound("Customer not found.");
+            
             var matter = await _unitOfWork.Matters.GetByIdAsync(customer_id, matter_id);
             if (matter == null) return NotFound();
             return Ok(matter);

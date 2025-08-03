@@ -65,7 +65,7 @@ namespace CustomerMatterManagementAPI.Controllers
             {
                 return BadRequest("Invalid login data.");
             }
-            
+
             var user = await _dbContext.Users
                 .FirstOrDefaultAsync(u => u.EmailAddr == userLoginDto.Email);
 
@@ -78,8 +78,17 @@ namespace CustomerMatterManagementAPI.Controllers
             {
                 new Claim(ClaimTypes.Email, user.EmailAddr)
             };
+            
+            var jwtKey = _configuration["Jwt:Key"];
+            var jwtIssuer = _configuration["Jwt:Issuer"];
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer))
+            {
+                // Don't surface the actual problem to the user
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
