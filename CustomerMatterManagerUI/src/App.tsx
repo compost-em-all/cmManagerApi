@@ -3,6 +3,7 @@ import './App.css'
 import DataTable from './components/dataTable';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { CustomerDTO } from './models/customerDto';
+import CustomerMatterModal from './components/customerModal';
 
 const columns: ColumnDef<CustomerDTO>[] = [
   {
@@ -19,26 +20,18 @@ const columns: ColumnDef<CustomerDTO>[] = [
     accessorKey: 'phoneNum',
     header: 'Phone Number',
     cell: info => info.getValue(),
-  },
-  {
-    header: 'Actions',
-    accessorKey: 'actions',
-    cell: ({ row }) => (
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
-        onClick={() => alert(`Open modal for ${row.original.name}`)}
-      >
-        Open Modal
-      </button>
-    ),
   }
 ];
 
 function App() {
   const [data, setData] = useState<CustomerDTO[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number>(0);
 
   const handleRowAction = (row: CustomerDTO) => {
-    alert(`Open modal for ${row.name}`);
+    console.log('Row action clicked:', row);
+    setSelectedCustomerId(row.customerId);
+    setIsModalOpen(true);
   };
 
   // get data from API
@@ -76,13 +69,8 @@ function App() {
 
   return (
       <div className="flex flex-col h-screen">
-        <header className="bg-gray-500 text-white p-4">
+        <header className="bg-blue-500 text-white p-4">
           <nav>
-            {/* <ul className="flex space-x-4">
-              <li>
-                <a href="#" className="text-white hover:underline">Home</a>
-              </li>
-            </ul> */}
           </nav>
           <h1 className="text-white text-lg font-bold">Customer Matter Manager</h1>
         </header>
@@ -90,6 +78,11 @@ function App() {
           <h2 className="text-2xl font-semibold mb-4">Customers</h2>
           <DataTable data={data} columns={columns} onRowAction={handleRowAction} />
         </main>
+        <CustomerMatterModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          customerId={selectedCustomerId}>
+        </CustomerMatterModal>
       </div>
   )
 }

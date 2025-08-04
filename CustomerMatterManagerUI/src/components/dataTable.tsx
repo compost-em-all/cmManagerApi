@@ -8,10 +8,10 @@ import type { ColumnDef } from '@tanstack/react-table';
 interface DataTableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T, any>[];
-  onRowAction?: (row: T) => void;
+  onRowAction: (row: T) => void;
 }
 
-function DataTable<T extends object>({ data, columns }: DataTableProps<T>) {
+function DataTable<T extends object>({ data, columns, onRowAction }: DataTableProps<T>) {
   const table = useReactTable({
     data,
     columns,
@@ -29,6 +29,9 @@ function DataTable<T extends object>({ data, columns }: DataTableProps<T>) {
                   {flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                </th>
             </tr>
           ))}
         </thead>
@@ -40,6 +43,14 @@ function DataTable<T extends object>({ data, columns }: DataTableProps<T>) {
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
+              <td>
+                <button
+                    onClick={() => onRowAction(row.original)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
+                >
+                    Open Modal
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
