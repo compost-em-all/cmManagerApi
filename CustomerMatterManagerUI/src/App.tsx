@@ -4,6 +4,7 @@ import DataTable from './components/dataTable';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { CustomerDTO } from './models/customerDto';
 import CustomerMatterModal from './components/customerModal';
+import type { UserLoginDto, UserSignUpDTO } from './models/userDto';
 
 const columns: ColumnDef<CustomerDTO>[] = [
   {
@@ -24,6 +25,13 @@ const columns: ColumnDef<CustomerDTO>[] = [
 ];
 
 function App() {
+  // Auth state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [loginForm, setLoginForm] = useState<UserLoginDto>({ email: '', password: '' });
+  const [signUpForm, setSignUpForm] = useState<UserSignUpDTO>({ email: '', password: '', firstName: '', lastName: '', firmName: '' });
+  const [authError, setAuthError] = useState<string | null>(null);
+  
   const [data, setData] = useState<CustomerDTO[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number>(0);
@@ -32,6 +40,42 @@ function App() {
     console.log('Row action clicked:', row);
     setSelectedCustomerId(row.customerId);
     setIsModalOpen(true);
+  };
+
+  // Handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm),
+      });
+      if (!response.ok) throw new Error('Login failed');
+      localStorage.setItem('token', (await response.json()).token);
+      setIsLoggedIn(true);
+    } catch (err: any) {
+      setAuthError(err.message);
+    }
+  };
+
+  // Handle sign up
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    try {
+      console.log('signUpForm', signUpForm);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(signUpForm),
+      });
+      if (!response.ok) throw new Error('Sign up failed');
+      setIsLoggedIn(true);
+    } catch (err: any) {
+      setAuthError(err.message);
+    }
   };
 
   // get data from API
@@ -66,6 +110,37 @@ function App() {
     //   .then(data => setData(data))
     //   .catch(error => console.error('Error fetching data:', error));
   }, []);
+
+// Auth UI
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-4">{showSignUp ? 'Sign Up' : 'Login'}</h2>
+          {authError && <div className="text-red-500 mb-2">{authError}</div>}
+          {showSignUp ? (
+            <form onSubmit={handleSignUp} className="space-y-3">
+              <input className="w-full border p-2 rounded" placeholder="Email" type="email" required value={signUpForm.email} onChange={e => setSignUpForm(f => ({ ...f, email: e.target.value }))} />
+              <input className="w-full border p-2 rounded" placeholder="First Name" required value={signUpForm.firstName} onChange={e => setSignUpForm(f => ({ ...f, firstName: e.target.value }))} />
+              <input className="w-full border p-2 rounded" placeholder="Last Name" required value={signUpForm.lastName} onChange={e => setSignUpForm(f => ({ ...f, lastName: e.target.value }))} />
+              <input className="w-full border p-2 rounded" placeholder="Firm Name" required value={signUpForm.firmName} onChange={e => setSignUpForm(f => ({ ...f, firmName: e.target.value }))} />
+              <input className="w-full border p-2 rounded" placeholder="Password" type="password" required value={signUpForm.password} onChange={e => setSignUpForm(f => ({ ...f, password: e.target.value }))} />
+              <button className="w-full bg-blue-500 text-white py-2 rounded" type="submit">Sign Up</button>
+            </form>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-3">
+              <input className="w-full border p-2 rounded" placeholder="Email" type="email" required value={loginForm.email} onChange={e => setLoginForm(f => ({ ...f, email: e.target.value }))} />
+              <input className="w-full border p-2 rounded" placeholder="Password" type="password" required value={loginForm.password} onChange={e => setLoginForm(f => ({ ...f, password: e.target.value }))} />
+              <button className="w-full bg-blue-500 text-white py-2 rounded" type="submit">Login</button>
+            </form>
+          )}
+          <button className="mt-4 text-blue-500 underline" onClick={() => setShowSignUp(s => !s)}>
+            {showSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
       <div className="flex flex-col h-screen">
