@@ -29,7 +29,7 @@ function DataTable<T extends object>({ data, columns, onRowAction }: DataTablePr
                   {flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
-              {onRowAction && <th className="px-6 py-3">Action</th>}
+              {onRowAction && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>}
             </tr>
           ))}
         </thead>
@@ -37,7 +37,7 @@ function DataTable<T extends object>({ data, columns, onRowAction }: DataTablePr
           {table.getRowModel().rows.map(row => (
             <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
+                <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-gray-500 text-left">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

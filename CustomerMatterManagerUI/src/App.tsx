@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import DataTable from './components/dataTable';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -13,7 +11,7 @@ const columns: ColumnDef<CustomerDTO>[] = [
     cell: info => info.getValue(),
   },
   {
-    accessorKey: 'customerName',
+    accessorKey: 'name',
     header: 'Name',
     cell: info => info.getValue(),
   },
@@ -25,7 +23,6 @@ const columns: ColumnDef<CustomerDTO>[] = [
 ];
 
 function App() {
-  const [count, setCount] = useState(0)
   const [data, setData] = useState<CustomerDTO[]>([]);
 
   const handleRowAction = (row: CustomerDTO) => {
@@ -35,17 +32,28 @@ function App() {
   // get data from API
   useEffect(() => {
     const fetchData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/customer`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`, // Ensure you have set this in your .env file
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setData(data);
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
       console.log(`${import.meta.env.VITE_API_URL}`);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/customer`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('Response status:', response);
-
+      
     };
 
     fetchData();
@@ -57,34 +65,22 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="flex flex-col h-screen">
+        <header className="bg-gray-500 text-white p-4">
+          <nav>
+            {/* <ul className="flex space-x-4">
+              <li>
+                <a href="#" className="text-white hover:underline">Home</a>
+              </li>
+            </ul> */}
+          </nav>
+          <h1 className="text-white text-lg font-bold">Customer Matter Manager</h1>
+        </header>
+        <main className='flex-grow p-4'>
+            <h2 className="text-2xl font-semibold mb-4">Customers</h2>
+            <DataTable data={data} columns={columns} onRowAction={handleRowAction} />
+        </main>
       </div>
-      <h1>Vite + React</h1>
-      <h1 className="text-3xl font-bold underline">
-        Hello Vite + React + TailwindCSS!
-      </h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <div className="mt-8">
-        <DataTable data={data} columns={columns} onRowAction={handleRowAction} />
-      </div>
-    </>
   )
 }
 
