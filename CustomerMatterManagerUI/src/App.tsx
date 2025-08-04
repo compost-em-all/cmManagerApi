@@ -102,6 +102,29 @@ function App() {
     fetchData();
   }, [isLoggedIn]);
 
+  // Create customer
+  const handleCreateCustomer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCustomerError(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/customer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(newCustomer),
+      });
+      if (!response.ok) throw new Error('Failed to create customer');
+      setNewCustomer({ name: '', phoneNum: '' });
+      // Refresh list
+      const updated = await fetch(`${import.meta.env.VITE_API_URL}/customer`, { method: 'GET', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+      setData(await updated.json());
+    } catch (err: any) {
+      setCustomerError(err.message);
+    }
+  };
+
   // Open modal and fetch matters
   const handleRowAction = (row: CustomerDTO) => {
     setSelectedCustomerId(row.customerId);
@@ -176,6 +199,7 @@ function App() {
     );
   }
 
+  // Logged in UI
   return (
       <div className="flex flex-col h-screen">
         <header className="bg-blue-500 text-white p-4">
@@ -185,6 +209,12 @@ function App() {
         </header>
         <main className='flex-grow p-4'>
           <h2 className="text-2xl font-semibold mb-4">Customers</h2>
+          {customerError && <div className="text-red-500 mb-2">{customerError}</div>}
+          <form onSubmit={handleCreateCustomer} className="mb-6 flex gap-2 items-end">
+            <input className="border p-2 rounded" placeholder="Name" required value={newCustomer.name} onChange={e => setNewCustomer(f => ({ ...f, name: e.target.value }))} />
+            <input className="border p-2 rounded" placeholder="Phone Number" required value={newCustomer.phoneNum} onChange={e => setNewCustomer(f => ({ ...f, phoneNum: e.target.value }))} />
+          <button className="bg-green-500 text-white py-2 px-4 rounded" type="submit">Add Customer</button>
+        </form>
           <DataTable data={data} columns={columns} onRowAction={handleRowAction} />
         </main>
         <CustomerMatterModal
