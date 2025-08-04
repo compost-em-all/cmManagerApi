@@ -1,8 +1,8 @@
 ## Customer Matter Management
 
-### Things to Do / Gameplan
+## Things to Do / Gameplan
 
-## 1. Database✅
+### 1. Database✅
 - ✅ Install postgres, pgadmin
 - ✅ Create database
 - ✅: Create schema
@@ -28,7 +28,7 @@
 - ✅ Initial database migration
     - ✅ Tested migrations with dummy db
 
-## 2. Backend API
+### 2. Backend API
 - ✅ Install dotnet 8
 - ✅ API
     - ✅: EFPowerTools
@@ -55,24 +55,24 @@
         - can generate tokens
         - can validate tokens
 
-## 3. React/Tailwind Frontend
-- Install node/npm
-- Create react app
+### 3. React/Tailwind Frontend
+- ✅ Install node/npm
+- ✅ Create react app - using vite
     - (Basic error handling)
-    - Use React with TailwindCSS
-    - Build a minimal UI with:
+    - ✅ Use React with TailwindCSS
+    - ✅ Build a minimal UI with:
         - A login form
         - A list of customers (clicking a customer should show their matters)
         - A form to create new customers
         - A form to create new matters under a customer
         - Optional: user in corner, clicking calls auth/me
 
-## 4. Other
-- README must explain how to run the application and get it setup
-- API documentation
+### 4. Other
+- ✅ README must explain how to run the application and get it setup
+- ✅ API documentation
     - swagger/openapi
 
-## ✅ .env file for env vars
+### ✅ .env file for env vars
 
 ### Extra
 - Search & Filtering for customers and matters
@@ -81,4 +81,48 @@
 - Role-Based Access (e.g., admin vs. standard users)
 - Improved UI/UX (Better styling, real-time updates)
 
-### Setup
+### Things I'd do if I had more time (not all inclusive)
+- the validation is only partially done in the UI project
+- genericize the calls to the API from the UI project so they are reusable
+- split up the different components that are all piled into the App.tsx file
+- routing since the components would be on different pages
+- annotate the routes in the API to surface more useful information in swagger
+- rework the returns for a few of the "Create" endpoints, I don't particularly like that I am saving a record and then turning back around and retrieving it from the db to return
+- better styling, i am not super familiar with Tailwind but took it as a learning opportunity
+- search with pagination for customers and matters
+- displaying who you are logged in as
+- ability to log out
+- login is not persisted across refreshes
+- request logging middlware/exception middleware (eg. Serilog)
+- containerization
+
+## Setup
+### Postgres/Database
+(Uses .NET CLI - should be installed if you have .NET Core >3.1 SDK installed)
+- Install postgres if it is not already installed
+- Install [pgAdmin](www.pgadmin.org)
+- Create new server registration in pgAdmin that points to localhost
+- Using pgAdmin, create a new postgres blank database with a name of your choice
+- In the CLI, install the dotnet-ef tool
+```sh
+dotnet tool install --global dotnet-ef
+```
+- In the CLI, navigate to CustomerMatterManagementAPI and run
+``` sh
+# run the first migration
+dotnet ef database update --connection "host=localhost;port=5432;database=YOURDBNAME;username=postgres;password=YOURPASSWORD"
+```
+### API
+(Uses the .NET CLI)
+- Inside CustomerMatterManagementaPI, create a .env file next to the .env.example file
+- Inside CustomerMatterManagementAPI, find .env.example and copy it's contents into .env, making sure to set your connection string, your JWT Issuer and JWT Key
+- Run `dotnet build` or build the solution, either should be fine
+- For hot-reloading, run `dotnet watch`; for just running the API, run `dotnet run`
+- In your browser, navigate to `http://localhost:5182/swagger/index.html` to confirm API is running
+
+### UI
+- In the CLI, navigate to CustomerMatterManagerUI
+- From inside the directory, run `npm install` (if package-lock.json is already present, run `npm ci`)
+- Navigate to the /environments directory and create a .env.local file
+- Copy the contents of .env.example into .env.local and save
+- Navigate back to CustomerMatterManagerUI and run `npm run dev`; the UI project should load in the browser
