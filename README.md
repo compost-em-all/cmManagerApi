@@ -2,11 +2,11 @@
 
 ## Things to Do / Gameplan
 
-### 1. Database✅
+### 1. ✅ Database
 - ✅ Install postgres, pgadmin
 - ✅ Create database
-- ✅: Create schema
-- ✅: Create tables
+- ✅ Create schema
+- ✅ Create tables
     - Users
          - UserId
          - Email addr
@@ -28,11 +28,11 @@
 - ✅ Initial database migration
     - ✅ Tested migrations with dummy db
 
-### 2. Backend API
+### 2. ✅ Backend API
 - ✅ Install dotnet 8
 - ✅ API
-    - ✅: EFPowerTools
-        - ✅: Reverse engineer db to setup context and initial migration
+    - ✅ EFPowerTools
+        - ✅ Reverse engineer db to setup context and initial migration
     - ✅ (Unit of Work/Repo pattern)
     - APIs
         - ✅ (Basic error handling)
@@ -107,7 +107,7 @@
 ```sh
 dotnet tool install --global dotnet-ef
 ```
-- In the CLI, navigate to CustomerMatterManagementAPI and run
+- To scaffold the database, we will need to run the intial db migation. In the CLI, navigate to CustomerMatterManagementAPI and run
 ``` sh
 # run the first migration
 dotnet ef database update --connection "host=localhost;port=5432;database=YOURDBNAME;username=postgres;password=YOURPASSWORD"
