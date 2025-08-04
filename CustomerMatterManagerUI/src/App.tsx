@@ -20,6 +20,18 @@ const columns: ColumnDef<CustomerDTO>[] = [
     header: 'Phone Number',
     cell: info => info.getValue(),
   },
+  {
+    header: 'Actions',
+    accessorKey: 'actions',
+    cell: ({ row }) => (
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
+        onClick={() => alert(`Open modal for ${row.original.name}`)}
+      >
+        Open Modal
+      </button>
+    ),
+  }
 ];
 
 function App() {
@@ -52,8 +64,6 @@ function App() {
         console.error('Error fetching data:', error);
       }
       console.log(`${import.meta.env.VITE_API_URL}`);
-
-      
     };
 
     fetchData();
@@ -77,8 +87,8 @@ function App() {
           <h1 className="text-white text-lg font-bold">Customer Matter Manager</h1>
         </header>
         <main className='flex-grow p-4'>
-            <h2 className="text-2xl font-semibold mb-4">Customers</h2>
-            <DataTable data={data} columns={columns} onRowAction={handleRowAction} />
+          <h2 className="text-2xl font-semibold mb-4">Customers</h2>
+          <DataTable data={data} columns={columns} onRowAction={handleRowAction} />
         </main>
       </div>
   )
