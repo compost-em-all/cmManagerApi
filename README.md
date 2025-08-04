@@ -1,4 +1,7 @@
 ## Customer Matter Management
+A simple example of what a client/matter management application may look like. Uses a .NET backend API and a React front end.
+
+This was a fun learning experience as it was the first time to that I had an opportunity to write dotnet on a Linux machine and with vscode. This project also afforded me the opportunity to try several new things I've never used before, such as vite, the efcore powertools CLI and Tailwindcss. I also got very familiar with the dotnet CLI 🙃
 
 ## Things to Do / Gameplan
 
