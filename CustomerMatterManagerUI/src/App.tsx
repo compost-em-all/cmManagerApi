@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { CustomerDTO } from './models/customerDto';
 import CustomerMatterModal from './components/customerModal';
 import type { UserLoginDto, UserSignUpDTO } from './models/userDto';
+import type { MatterDTO } from './models/matterDto';
 
 const columns: ColumnDef<CustomerDTO>[] = [
   {
@@ -39,12 +40,9 @@ function App() {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number>(0);
-
-  const handleRowAction = (row: CustomerDTO) => {
-    console.log('Row action clicked:', row);
-    setSelectedCustomerId(row.customerId);
-    setIsModalOpen(true);
-  };
+  const [matters, setMatters] = useState<MatterDTO[]>([]);
+  const [newMatter, setNewMatter] = useState({ title: '', description: '' });
+  const [matterError, setMatterError] = useState<string | null>(null);
 
   // Handle login
   const handleLogin = async (e: React.FormEvent) => {
@@ -104,6 +102,49 @@ function App() {
     fetchData();
   }, [isLoggedIn]);
 
+  // Open modal and fetch matters
+  const handleRowAction = (row: CustomerDTO) => {
+    setSelectedCustomerId(row.customerId);
+    setIsModalOpen(true);
+    setMatters([]);
+    setMatterError(null);
+
+    fetch(`${import.meta.env.VITE_API_URL}/customer/${row.customerId}/matters`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+      .then(res => res.ok ? res.json() : Promise.reject('Failed to fetch matters'))
+      .then(setMatters)
+      .catch(() => setMatterError('Failed to fetch matters'));
+  };
+
+  // Create matter
+  const handleCreateMatter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMatterError(null);
+    console.log(localStorage.getItem('token'));
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/customer/${selectedCustomerId}/matters`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ ...newMatter, customerId: selectedCustomerId }),
+      });
+      if (!response.ok) throw new Error('Failed to create matter');
+      setNewMatter({ title: '', description: '' });
+      // Refresh matters
+      const updated = await fetch(`${import.meta.env.VITE_API_URL}/customer/${selectedCustomerId}/matters`, { method: 'GET', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+      setMatters(await updated.json());
+    } catch (err: any) {
+      setMatterError(err.message);
+    }
+  };
+
 // Auth UI
   if (!isLoggedIn) {
     return (
@@ -149,7 +190,23 @@ function App() {
         <CustomerMatterModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          customerId={selectedCustomerId}>
+          customerId={selectedCustomerId}
+        >
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Matters</h3>
+            {matterError && <div className="text-red-500 mb-2">{matterError}</div>}
+            <ul className="mb-4 max-h-40 overflow-y-auto">
+              {matters.map(m => (
+                <li key={m.matterId} className="border-b py-1"><span className="font-bold">{m.title}</span>: {m.description}</li>
+              ))}
+              {matters.length === 0 && <li className="text-gray-500">No matters found.</li>}
+            </ul>
+            <form onSubmit={handleCreateMatter} className="space-y-2">
+              <input className="border p-2 rounded w-full" placeholder="Title" required value={newMatter.title} onChange={e => setNewMatter(f => ({ ...f, title: e.target.value }))} />
+              <textarea className="border p-2 rounded w-full" placeholder="Description" value={newMatter.description} onChange={e => setNewMatter(f => ({ ...f, description: e.target.value }))} />
+              <button className="bg-blue-500 text-white py-1 px-4 rounded w-full" type="submit">Add Matter</button>
+            </form>
+          </div>
         </CustomerMatterModal>
       </div>
   )
