@@ -15,5 +15,4 @@ public partial class Matter
 
     public string? Description { get; set; }
 
-    public virtual Customer Customer { get; set; } = null!;
 }

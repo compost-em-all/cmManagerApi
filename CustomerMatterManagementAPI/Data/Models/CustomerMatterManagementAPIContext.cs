@@ -41,10 +41,6 @@ public partial class CustomerMatterManagementAPIContext : DbContext
 
             entity.Property(e => e.MatterId).UseIdentityAlwaysColumn();
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.Matters)
-                .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("matters_CustomerId_fkey");
         });
 
         modelBuilder.Entity<User>(entity =>
