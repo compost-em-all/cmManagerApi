@@ -32,7 +32,11 @@ function App() {
   const [signUpForm, setSignUpForm] = useState<UserSignUpDTO>({ email: '', password: '', firstName: '', lastName: '', firmName: '' });
   const [authError, setAuthError] = useState<string | null>(null);
   
+  // Customer state
   const [data, setData] = useState<CustomerDTO[]>([]);
+  const [newCustomer, setNewCustomer] = useState({ name: '', phoneNum: '' });
+  const [customerError, setCustomerError] = useState<string | null>(null);
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number>(0);
 
@@ -78,38 +82,27 @@ function App() {
     }
   };
 
-  // get data from API
+  // Fetch customers
   useEffect(() => {
+    if (!isLoggedIn) return;
     const fetchData = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/customer`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`, // Ensure you have set this in your .env file
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         });
-
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Response status: ${response.status}`);
         const data = await response.json();
         setData(data);
-
       } catch (error) {
-        console.error('Error fetching data:', error);
+        setCustomerError('Error fetching customers');
       }
-      console.log(`${import.meta.env.VITE_API_URL}`);
     };
-
     fetchData();
-
-    // fetch(`${import.meta.env.VITE_API_URL}/customers`)
-    //   .then(response => response.json())
-    //   .then(data => setData(data))
-    //   .catch(error => console.error('Error fetching data:', error));
-  }, []);
+  }, [isLoggedIn]);
 
 // Auth UI
   if (!isLoggedIn) {
