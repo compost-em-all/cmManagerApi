@@ -48,6 +48,8 @@ function App() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
+    localStorage.removeItem('token');
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
         method: 'POST',
@@ -66,6 +68,9 @@ function App() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
+
+    localStorage.removeItem('token');
+
     try {
       console.log('signUpForm', signUpForm);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
@@ -73,8 +78,9 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(signUpForm),
       });
+
       if (!response.ok) throw new Error('Sign up failed');
-      setIsLoggedIn(true);
+      if (response.ok) alert('Sign up successful! You can now log in.');
     } catch (err: any) {
       setAuthError(err.message);
     }
